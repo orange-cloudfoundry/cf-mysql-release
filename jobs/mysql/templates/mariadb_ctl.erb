@@ -5,6 +5,7 @@ set -e
 export MARIADB_JOB_DIR=/var/vcap/jobs/mysql
 RUN_DIR=/var/vcap/sys/run/mysql
 datadir=/var/vcap/store/mysql
+tmpdir=/var/vcap/data/mysql/tmp
 LOG_DIR=/var/vcap/sys/log/mysql
 LOG_FILE=$LOG_DIR/mariadb_ctrl.combined.log
 CONFIG_DIR=/etc/mysql
@@ -95,6 +96,9 @@ case $1 in
     rm -f /etc/my.cnf
     rm -f $CONFIG_DIR/my.cnf
     ln -sf $MARIADB_JOB_DIR/config/my.cnf $CONFIG_DIR/my.cnf
+
+    mkdir -p ${tmpdir}
+    chown -R vcap:vcap ${tmpdir}
 
     if ! test -d ${datadir}; then
       log "start script: making ${datadir} and running /var/vcap/packages/mariadb/scripts/mysql_install_db"
