@@ -1,34 +1,47 @@
-#!/bin/bash -e
+#!/bin/bash
 
 set -e
+set -o pipefail
+
+<%
+  if p('cf_mysql.mysql.disable_auto_sst')
+    disable_sst_string = 'DISABLE_SST=1'
+  else
+    disable_sst_string = 'DISABLE_SST=0'
+  end
+
+  if p('cf_mysql.mysql.interrupt_notify_cmd')
+    disable_sst_string << " INTERRUPT_NOTIFY_CMD='#{p('cf_mysql.mysql.interrupt_notify_cmd')}'"
+  end
+%>
 
 export MARIADB_JOB_DIR=/var/vcap/jobs/mysql
-datadir=/var/vcap/store/mysql
-CONFIG_DIR=/etc/mysql
 LOG_DIR=/var/vcap/sys/log/mysql
 LOG_FILE=$LOG_DIR/mariadb_ctrl.combined.log
+SERVER_AUDIT_LOG_DIR=/var/vcap/store/mysql_audit_logs
 JOB_INDEX=<%= index %>
 CONFIG_FILE=$MARIADB_JOB_DIR/config/mariadb_ctl_config.yml
 MARIADB_CTRL_PACKAGE=/var/vcap/packages/mariadb_ctrl
+PROC_NAME=mariadb_ctl
+RUN_DIR=/var/vcap/sys/run/$PROC_NAME
+PIDFILE=$RUN_DIR/$PROC_NAME.pid
+PRESTART_MARKER_FILE=$RUN_DIR/prestart_marker
 
-MY_NAME=mariadb_ctl
-RUN_DIR=/var/vcap/sys/run/$MY_NAME
-PIDFILE=$RUN_DIR/$MY_NAME.pid
-TMP_DIR=/var/vcap/data/mysql/tmp
+source /var/vcap/packages/cf-mysql-common/pid_utils.sh
+source /var/vcap/packages/cf-mysql-common/syslog_utils.sh
 
-source /var/vcap/packages/common/utils.sh
+tee_output_to_sys_log ${LOG_DIR}
 
-# add mysql to path
-if [ ! -f /usr/local/bin/mysql ]; then
-  log "Adding mysql to path"
-  ln -s /var/vcap/packages/mariadb/bin/mysql /usr/local/bin
-fi
+# logrotate audit logs
+ln -sf /var/vcap/jobs/mysql/config/mysql_audit_logs.logrotate /etc/logrotate.d/mysql_audit_logs
 
 # add xtrabackup to path
 export PATH=$PATH:/var/vcap/packages/xtrabackup/bin
 
 # add perl libraries to perl env
 export PERL5LIB=$PERL5LIB:/var/vcap/packages/xtrabackup/lib/perl/5.18.2
+
+ulimit -n <%= p('cf_mysql.mysql.max_open_files') %>
 
 case $1 in
 
@@ -39,74 +52,46 @@ case $1 in
   # monit unmonitor && monit monitor, at which point monit would find the pid and reset the status to 'running'
 
   start)
-
-    if [[ ! -d "$RUN_DIR" ]]; then
-      log "start script: directory $RUN_DIR does not exist, creating it now"
-      mkdir -p $RUN_DIR
+    if [ ! -f ${PRESTART_MARKER_FILE} ]; then
+      >&2 echo "This bosh version and/or stemcell version is not pre-start compatible"
+      exit 1
     fi
 
-    if [[ ! -d "$TMP_DIR" ]]; then
-      log "start script: directory $TMP_DIR does not exist, creating it now"
-      mkdir -p $TMP_DIR
-      chown -R vcap:vcap $TMP_DIR
-    fi
+    # WORKAROUND: monit may attempt to run this script multiple times if mysqld does not start in time.
+    # Ensure that running this script multiple times does not spawn multiple copies of _ctrl
+    LAUNCHER_NAME=mariadb_ctl_launcher
+    LAUNCHER_PID_FILE=$RUN_DIR/$LAUNCHER_NAME.pid
+    pid_guard $LAUNCHER_PID_FILE $LAUNCHER_NAME
 
-    log "start script: checking for existing instance of $MY_NAME"
-    set +e
-    $(source /var/vcap/packages/common/utils.sh; pid_guard $PIDFILE $MY_NAME)
-    pg_exit_code=$?
-    log "start script: pg_exit_code: $pg_exit_code"
-    if [ $pg_exit_code -eq 1 ]; then
-      log "start script: $MY_NAME already running. Exiting 0 so that monit doesn't think that execution failed"
-      exit 0
-    fi
-    set -e
+    echo "Checking for existing instance of $PROC_NAME"
+    pid_guard $PIDFILE $PROC_NAME
 
-    # Start syslog forwarding
-    /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh $MARIADB_JOB_DIR/config
-
-    mkdir -p $LOG_DIR
-    touch $LOG_FILE
-    chown vcap:vcap $LOG_FILE
-    date >> $LOG_FILE 2>> $LOG_FILE
-
-    # It is surprisingly hard to get the config file location passed in
-    # on the command line to the mysql.server script. This is easier.
-    mkdir -p $CONFIG_DIR
-    rm -f /etc/my.cnf
-    rm -f $CONFIG_DIR/my.cnf
-    ln -sf $MARIADB_JOB_DIR/config/my.cnf $CONFIG_DIR/my.cnf
-
-    if ! test -d ${datadir}; then
-      log "start script: making ${datadir} and running /var/vcap/packages/mariadb/scripts/mysql_install_db"
-      mkdir -p ${datadir}
-      /var/vcap/packages/mariadb/scripts/mysql_install_db \
-             --basedir=/var/vcap/packages/mariadb \
-             --user=vcap \
-             --datadir=${datadir} >> $LOG_FILE 2>> $LOG_FILE
-    fi
-    chown -R vcap:vcap ${datadir}
+    <% if_p('cf_mysql.mysql.server_audit_events') do |_| %>
+    mkdir -p ${SERVER_AUDIT_LOG_DIR}
+    chown vcap:vcap ${SERVER_AUDIT_LOG_DIR}
+    <% end %>
 
     cd $MARIADB_CTRL_PACKAGE
 
-    log "start script: starting mariadb_ctrl..."
-    $MARIADB_CTRL_PACKAGE/bin/mariadb_ctrl \
+    echo "start script: starting mariadb_ctrl..."
+    su - vcap -c -o pipefail \
+    "<%= disable_sst_string %> PATH=$PATH PERL5LIB=$PERL5LIB $MARIADB_CTRL_PACKAGE/bin/mariadb_ctrl \
              -configPath=$CONFIG_FILE \
              2>&1 \
              | tee -a $LOG_FILE \
-             | logger -p local1.error -t mariadb_ctrl &
+             | logger -p user.error -t mariadb_ctrl &"
 
-    log "start script: completed starting mariadb_ctrl."
+    echo $! > $LAUNCHER_PID_FILE
+
+    echo "start script: completed starting mariadb_ctrl."
     ;;
 
   stop)
-    log "stop script: stopping mariadb_ctrl..."
-    mkdir -p $LOG_DIR
-    date >> $LOG_FILE 2>> $LOG_FILE
+    echo "stop script: stopping mariadb_ctrl..."
 
-    log "stop script: stopping node $JOB_INDEX" >> $LOG_FILE
+    echo "stop script: stopping node $JOB_INDEX"
     kill_and_wait $PIDFILE
-    log "stop script: completed stopping mariadb_ctrl"
+    echo "stop script: completed stopping mariadb_ctrl"
     ;;
 
   *)

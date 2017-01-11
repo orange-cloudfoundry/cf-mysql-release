@@ -29,7 +29,7 @@ Pushing to any branch other than [**develop**](https://github.com/cloudfoundry/c
 
 1. Fork the repository on github
 
-1. Update submodules (`./update`)
+1. Update submodules (`./scripts/update`)
 
 1. Create a feature branch (`git checkout -b awesome_sauce`)
   * Run the unit tests to ensure that your local environment is working `./scripts/test-unit`
@@ -46,7 +46,7 @@ Pushing to any branch other than [**develop**](https://github.com/cloudfoundry/c
     1. Ensure that tests still pass
       * If you find yourself changing tests after a refactor, consider refactoring the tests first
 
-1. Run the [acceptance tests](docs/acceptance-tests.md) (update them if required).
+1. Run the [smoke-tests](https://github.com/cloudfoundry/cf-mysql-release#smoke-tests) (update them if required).
 
 1. Commit your changes (`git commit`)
   * Small changes per commit with clear commit messages are preferred.

@@ -16,7 +16,7 @@
 
 [Security Groups](#security-groups)
 
-[Smoke Tests and Acceptance Tests](#smoke-acceptance-tests)
+[Smoke Tests](#smoke-tests)
 
 [Deregistering the Service Broker](#deregistering-broker)
 
@@ -39,7 +39,7 @@ A BOSH release of a MySQL database-as-a-service for Cloud Foundry using [MariaDB
    </tr>
    <tr>
      <td>MySQL Server</td>
-     <td>MariaDB 10.0.17; database instances are hosted on the servers.</td>
+     <td>MariaDB 10.0.24; database instances are hosted on the servers.</td>
    </tr>
       <tr>
      <td>Proxy</td>
@@ -147,7 +147,7 @@ you if you have [direnv](http://direnv.net) installed.
     direnv allow
 
     # initialize and sync submodules
-    ./update
+    ./scripts/update
 
 If you do not wish to use direnv, you can simply `source` the `.envrc` file in the root
 of the release repo.  You may manually need to update your `$GOPATH` and `$PATH` variables
@@ -180,7 +180,7 @@ After installation, the MySQL service will be visible in the Services Marketplac
 <a name="upload_stemcell"></a>
 ### Upload Stemcell
 
-The latest final release expects the Ubuntu Trusty (14.04) go_agent stemcell version [2859](https://github.com/cloudfoundry/bosh/blob/master/CHANGELOG.md#2859) by default. Older stemcells are not recommended. Stemcells can be downloaded from http://bosh.io/stemcells; choose the appropriate stemcell for your infrastructure ([vsphere esxi](https://d26ekeud912fhb.cloudfront.net/bosh-stemcell/vsphere/bosh-stemcell-2859-vsphere-esxi-ubuntu-trusty-go_agent.tgz) or [aws hvm](https://d26ekeud912fhb.cloudfront.net/bosh-stemcell/aws/light-bosh-stemcell-2859-aws-xen-hvm-ubuntu-trusty-go_agent.tgz)).
+The latest final release expects the Ubuntu Trusty (14.04) go_agent stemcell version [2859](https://github.com/cloudfoundry/bosh/blob/master/CHANGELOG.md#2859) by default. Older stemcells are not recommended. Stemcells can be downloaded from http://bosh.io/stemcells; choose the appropriate stemcell for your infrastructure ([vsphere esxi](https://d26ekeud912fhb.cloudfront.net/bosh-stemcell/vsphere/bosh-stemcell-2859-vsphere-esxi-ubuntu-trusty-go_agent.tgz),  [aws hvm](https://d26ekeud912fhb.cloudfront.net/bosh-stemcell/aws/light-bosh-stemcell-2859-aws-xen-hvm-ubuntu-trusty-go_agent.tgz), or [openstack kvm](https://d26ekeud912fhb.cloudfront.net/bosh-stemcell/openstack/bosh-stemcell-2859-openstack-kvm-ubuntu-trusty-go_agent.tgz)).
 
 <a name="upload_release"></a>
 ### Upload Release
@@ -198,7 +198,7 @@ Run the upload command, referencing the latest config file in the `releases` dir
   ```
   $ cd ~/workspace/cf-mysql-release
   $ git checkout master
-  $ ./update
+  $ ./scripts/update
   $ bosh upload release releases/cf-mysql-<N>.yml
   ```
 
@@ -207,7 +207,7 @@ If deploying an **older** final release than the latest, check out the tag for t
   ```
   $ cd ~/workspace/cf-mysql-release
   $ git checkout v<N>
-  $ ./update
+  $ ./scripts/update
   $ bosh upload release releases/cf-mysql-<N>.yml
   ```
 
@@ -218,7 +218,7 @@ If deploying an **older** final release than the latest, check out the tag for t
   ```
   $ cd ~/workspace/cf-mysql-release
   $ git checkout release-candidate
-  $ ./update
+  $ ./scripts/update
   $ bosh create release
   ```
 
@@ -239,7 +239,7 @@ Note: No infrastructure changes are required to deploy to bosh-lite
 
 Prior to deployment, the operator should define three subnets via their infrastructure provider.
 The MySQL release is designed to be deployed across three subnets to ensure availability in the event of a subnet failure.  During installation, a fourth subnet is required for compilation vms.
-The [sample_aws_stub.yml](https://github.com/cloudfoundry/cf-mysql-release/blob/master/templates/sample_stubs/sample_aws_stub.yml) demonstrates how these subnets can be configured on AWS across multiple availability zones.
+The [iaas-settings.yml](https://github.com/cloudfoundry/cf-mysql-release/blob/master/manifest-generation/examples/aws/iaas-settings.yml) demonstrates how these subnets can be configured on AWS across multiple availability zones.
 
 #### Create load balancer
 
@@ -276,8 +276,12 @@ The brokers each register a route with the router, which load balances requests 
 <a name="create_manifest"></a>
 ### Create Manifest and Deploy
 
+Please note that the manifest generation scripts require spiff version 1.0.7 or greater. 
+
 <a name="bosh-lite"></a>
 #### Deploy on BOSH-lite
+
+To use the provided manifest stubs you will need a version of bosh-lite that supports multiple containers on the same subnet (bosh-lite version 9000.50.0+).
 
 1. Run the following script to generate a working manifest for a bosh-lite on your local machine:
     ```
@@ -294,7 +298,9 @@ The brokers each register a route with the router, which load balances requests 
   $ bosh edit deployment
   ```
 
-#### Deploy on AWS or vSphere
+#### Deploy on AWS, vSphere, or OpenStack
+
+Note: Only AWS and vSphere infrastructures are currently tested by the cf-mysql team.
 
 ##### Copy sample stubs and fill in values
 
@@ -324,26 +330,27 @@ This admin user must have the `cloud_controller.admin` UAA permission.
 
 Note: This change to the CF manifest is temporary while we investigate better methods for sharing properties across deployments.
 
-##### Generate AWS or vSphere manifest
+##### Generate an AWS, vSphere, or OpenStack manifest
 
 Run the `./scripts/generate-deployment-manifest` with the stubs you created in the preceeding steps.
 
 ```
 Usage:
-The script requires the following arguments-
+  Mandatory arguments:
     -c CF Manifest
-    -p Property overrides stub file (Use this file to provide credentials and broker plans)
-    -i Infrastructure type stub file (AWS or vSphere)
-The following arguments are optional-
+    -p Property overrides stub file
+    -i Infrastructure settings stub file
+  Optional arguments
     -n Instance count overrides stub file (single node, 3 node)
-    -v Release versions stub file (Use this file to specify the cf-mysql release version, defaults to latest)
+    -v Release versions stub file
+    -j Manifest stub file for additional jobs
 ```
 
 For example:
 
 ```
 $ ./scripts/generate-deployment-manifest \
-  -c <YOUR_CONFIG_REPO>/cf-stub.yml \
+  -c <YOUR_CONFIG_REPO>/cf-manifest.yml \
   -p <YOUR_CONFIG_REPO>/cf-mysql/property-overrides.yml \
   -i <YOUR_CONFIG_REPO>/cf-mysql/iaas-settings.yml \
   > cf-mysql.yml
@@ -437,14 +444,12 @@ Since [cf-release](https://github.com/cloudfoundry/cf-release) v175, application
 
 Security group changes are only applied to new application containers; existing apps must be restarted.
 
-<a name="smoke-acceptance-tests"></a>
-## Smoke Tests and Acceptance Tests
+<a name="smoke-tests"></a>
+## Smoke Tests
 
-The smoke tests are a subset of the acceptance tests, useful for verifying a deployment. The acceptance tests are for developers to validate changes to the MySQL Release. These tests can be run manually or from a BOSH errand. For details on running these tests manually, see [Acceptance Tests](docs/acceptance-tests.md).
+The smoke tests are useful for verifying a deployment.
+The MySQL Release contains an "smoke-tests" job which is deployed as a BOSH errand. The errand can then be run to verify the deployment. A deployment manifest [generated with the provided spiff templates](#create_manifest) will include this job.
 
-The MySQL Release contains an "acceptance-tests" job which is deployed as a BOSH errand. The errand can then be run to verify the deployment. A deployment manifest [generated with the provided spiff templates](#create_manifest) will include this job. The errand can be configured to run either the smoke tests (default) or the acceptance tests.
-
-<a name="smoke_tests"></a>
 ### Running Smoke Tests via BOSH errand
 
 To run the MySQL Release Smoke tests you will need:
@@ -456,10 +461,10 @@ To run the MySQL Release Smoke tests you will need:
 Run the smoke tests via bosh errand as follows:
 
 ```
-$ bosh run errand acceptance-tests
+$ bosh run errand smoke-tests
 ```
 
-Modifying values under `jobs.acceptance-tests.properties` may be required. Configuration options can be found in the [job spec](jobs/acceptance-tests/spec).
+Modifying values under `jobs.smoke-tests.properties` may be required. Configuration options can be found in the [job spec](jobs/smoke-tests/spec).
 
 <a name="deregistering-broker"></a>
 ## De-registering the Service Broker

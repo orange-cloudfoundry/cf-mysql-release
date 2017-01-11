@@ -1,19 +1,19 @@
 ---
-name: (( config_from_cf.cf_deployment_name "-mysql" ))
+name: (( property_overrides.deployment_name || config_from_cf.cf_deployment_name "-mysql" ))
 director_uuid: (( config_from_cf.cf_director_uuid ))
 
 releases: (( base_releases additional_releases ))
 
 compilation:
-  workers: (( iaas_settings.compilation_workers || 4))
+  workers: (( iaas_settings.compilation_workers || 4)) 
   network: mysql1
   reuse_compilation_vms: true
   cloud_properties: (( iaas_settings.compilation_cloud_properties ))
 
 update:
   canaries: 1
-  canary_watch_time: (( merge || "30000-" canary_end_in_sec ))
-  update_watch_time: (( merge || "30000-" canary_end_in_sec ))
+  canary_watch_time: (( iaas_settings.watch_time || "10000-600000" ))
+  update_watch_time: (( iaas_settings.watch_time || "10000-600000" ))
   max_in_flight: 1
   serial: true
 
@@ -42,12 +42,11 @@ properties:
     password: (( config_from_cf.nats.password ))
     port: (( config_from_cf.nats.port ))
   app_domains: (( config_from_cf.app_domains ))
-  domain: (( config_from_cf.domain ))
   cf:
     api_url: (( config_from_cf.api_url ))
     app_domains: (( config_from_cf.app_domains ))
-    admin_username: (( config_from_cf.admin_username ))
-    admin_password: (( config_from_cf.admin_password ))
+    admin_username: (( config_from_cf.uaa.scim.users.admin.name ))
+    admin_password: (( config_from_cf.uaa.scim.users.admin.password ))
     skip_ssl_validation: (( config_from_cf.skip_ssl_validation || nil ))
     smoke_tests:
       use_existing_org: (( config_from_cf.smoke_tests.use_existing_org || nil ))
@@ -55,20 +54,19 @@ properties:
   syslog_aggregator: (( property_overrides.syslog_aggregator || nil ))
   cf_mysql:
     standalone: (( property_overrides.standalone || false ))
-    external_host: (( "p-mysql." .properties.domain ))
+    external_host: (( "p-mysql." .config_from_cf.system_domain ))
     host: (( property_overrides.host || jobs.proxy_z1.networks.mysql1.static_ips.[0] ))
     mysql:
       admin_username: (( property_overrides.mysql.admin_username || nil ))
       admin_password: (( property_overrides.mysql.admin_password ))
+      disable_auto_sst: (( property_overrides.mysql.disable_auto_sst || nil ))
       port: (( property_overrides.mysql.port || nil ))
       galera_port: (( property_overrides.mysql.galera_port || nil ))
-      healthcheck_port: (( property_overrides.mysql.healthcheck_port || nil ))
-      bootstrap_endpoint: (( property_overrides.mysql.bootstrap_endpoint ))
+      galera_healthcheck: (( property_overrides.mysql.galera_healthcheck || nil ))
       cluster_ips: (( property_overrides.mysql.cluster_ips || default_mysql_cluster_ips ))
       roadmin_enabled: (( property_overrides.mysql.roadmin_enabled || false ))
       roadmin_password: (( property_overrides.mysql.roadmin_password ))
       seeded_databases: (( property_overrides.mysql.seeded_databases || nil ))
-      database_startup_timeout: (( property_overrides.mysql.database_startup_timeout || 600 ))
       max_heap_table_size: (( property_overrides.mysql.max_heap_table_size || nil ))
       tmp_table_size: (( property_overrides.mysql.tmp_table_size || nil ))
       wsrep_max_ws_rows: (( property_overrides.mysql.wsrep_max_ws_rows || nil ))
@@ -77,8 +75,13 @@ properties:
       gcache_size: (( property_overrides.mysql.gcache_size || nil ))
       ib_log_file_size: (( property_overrides.mysql.ib_log_file_size || nil ))
       innodb_buffer_pool_size: (( property_overrides.mysql.innodb_buffer_pool_size || nil ))
+      interrupt_notify_cmd: (( property_overrides.mysql.interrupt_notify_cmd || nil ))
       max_connections: (( property_overrides.mysql.max_connections || nil ))
       persistent_disk: (( disk_pools.mysql-persistent-disk.disk_size ))
+      server_audit_events: (( property_overrides.mysql.server_audit_events || nil ))
+      server_audit_excluded_users: (( property_overrides.mysql.server_audit_excluded_users || nil ))
+      cluster_health:
+        password: (( property_overrides.mysql.cluster_health.password ))
     proxy:
       api_username: (( property_overrides.proxy.api_username ))
       api_password: (( property_overrides.proxy.api_password ))
@@ -89,17 +92,20 @@ properties:
       port: (( property_overrides.proxy.port || nil ))
       healthcheck_timeout_millis: (( property_overrides.proxy.healthcheck_timeout_millis || nil ))
       api_port: (( property_overrides.proxy.api_port || nil ))
+      consul_enabled: (( property_overrides.proxy.consul_enabled || nil ))
+      consul_service_name: (( property_overrides.proxy.consul_service_name || nil ))
     broker:
+      db_password: (( property_overrides.broker.db_password || nil ))
       max_user_connections_default: (( property_overrides.broker.max_user_connections_default || nil ))
       ssl_enabled: (( property_overrides.broker.ssl_enabled || nil ))
       auth_username: (( property_overrides.broker.auth_username ))
       auth_password: (( property_overrides.broker.auth_password ))
       cookie_secret: (( property_overrides.broker.cookie_secret ))
-      external_host: (( property_overrides.broker.external_domain || .properties.cf_mysql.external_host ))
       protocol: (( property_overrides.broker.protocol || nil ))
       port: (( property_overrides.broker.port || nil ))
+      quota_enforcer: (( property_overrides.broker.quota_enforcer ))
       services:
-      - name: p-mysql
+      - name: (( property_overrides.broker.service_name ))
         plan_updateable: true
         id: (( property_overrides.broker.service_id || "44b26033-1f54-4087-b7bc-da9652c2a539" ))
         description: MySQL databases on demand
@@ -116,25 +122,27 @@ properties:
           id: p-mysql
           secret: (( property_overrides.broker.dashboard_secret ))
         plans: (( property_overrides.broker.plans ))
-    acceptance_tests:
-      smoke_tests_only: (( property_overrides.acceptance_tests.smoke_tests_only || nil ))
-      standalone_tests_only: (( property_overrides.acceptance_tests.standalone_tests_only || nil ))
-      timeout_scale: (( property_overrides.acceptance_tests.timeout_scale || nil ))
-  cf-mysql-backup:
-    symmetric_key: (( property_overrides.cf-mysql-backup.symmetric_key || nil ))
-    endpoint_credentials:
-      username: (( property_overrides.cf-mysql-backup.endpoint_credentials.username || nil ))
-      password: (( property_overrides.cf-mysql-backup.endpoint_credentials.password || nil ))
-  service-backup:
-    cron_schedule: (( property_overrides.service-backup.cron_schedule || nil ))
-    blobstore:
-      bucket_name: (( property_overrides.service-backup.blobstore.bucket_name || nil ))
-      bucket_path: (( property_overrides.service-backup.blobstore.bucket_path || nil ))
-      access_key_id: (( property_overrides.service-backup.blobstore.access_key_id || nil ))
-      secret_access_key: (( property_overrides.service-backup.blobstore.secret_access_key || nil ))
-    source_folder: (( property_overrides.service-backup.source_folder || nil ))
-    source_executable: (( property_overrides.service-backup.source_executable || nil ))
-    cleanup_executable: (( property_overrides.service-backup.cleanup_executable || nil ))
+    smoke_tests:
+      password: (( property_overrides.smoke_tests.password ))
+      standalone_tests_only: (( property_overrides.smoke_tests.standalone_tests_only || nil ))
+      timeout_scale: (( property_overrides.smoke_tests.timeout_scale || nil ))
+  cf-mysql-backup: (( property_overrides.cf-mysql-backup || nil ))
+  service-backup: (( property_overrides.service-backup || nil ))
+
+  # -- Properties below are used by the consul_agent job from cf-release --
+  consul:
+    agent:
+      datacenter: (( config_from_cf.consul.datacenter ))
+      domain: (( config_from_cf.consul.domain ))
+      log_level: (( config_from_cf.consul.log_level ))
+      servers:
+        lan: (( config_from_cf.consul.lan_servers ))
+    ca_cert: (( config_from_cf.consul.ca_cert ))
+    agent_cert: (( config_from_cf.consul.agent_cert ))
+    agent_key: (( config_from_cf.consul.agent_key ))
+    encrypt_keys: (( config_from_cf.consul.encrypt_keys ))
+    server_cert: (( config_from_cf.consul.server_cert ))
+    server_key: (( config_from_cf.consul.server_key ))
 
 base_releases:
 - name: cf-mysql
@@ -182,11 +190,17 @@ base_resource_pools:
   cloud_properties: (( iaas_settings.resource_pool_cloud_properties.errands_z1.cloud_properties ))
 base_templates:
   mysql:
-  - {release: cf-mysql, name: mysql}
+  - release: cf-mysql
+    name: mysql
+    consumes: {mysql: nil, arbitrator: nil}
   proxy:
-  - {release: cf-mysql, name: proxy}
+  - release: cf-mysql
+    name: proxy
+    consumes: {mysql: nil, arbitrator: nil, proxy: nil}
   arbitrator:
-  - {release: cf-mysql, name: arbitrator}
+  - release: cf-mysql
+    name: arbitrator
+    consumes: {mysql: nil, arbitrator: nil}
   broker:
   - {release: cf-mysql, name: cf-mysql-broker}
 colocated_jobs:
@@ -208,8 +222,6 @@ base_jobs:
   networks:
   - name: mysql1
     static_ips: (( static_ips(0) ))
-  properties:
-    network_name: mysql1
 - name: mysql_z2
   templates: (( base_templates.mysql colocated_jobs.mysql_z2 ))
   instances: (( instance_count_overrides.mysql_z2.instances || 1 ))
@@ -218,8 +230,6 @@ base_jobs:
   networks:
   - name: mysql2
     static_ips: (( static_ips(0) ))
-  properties:
-    network_name: mysql2
 - name: mysql_z3
   templates: (( base_templates.mysql colocated_jobs.mysql_z3 ))
   # defaults to using an arbitrator in place of mysql node in z3
@@ -229,8 +239,6 @@ base_jobs:
   networks:
   - name: mysql3
     static_ips: (( static_ips(0) ))
-  properties:
-    network_name: mysql3
 - name: arbitrator_z3
   templates: (( base_templates.arbitrator colocated_jobs.arbitrator_z3 ))
   instances: (( instance_count_overrides.arbitrator_z3.instances || 1 ))
@@ -238,8 +246,6 @@ base_jobs:
   networks:
   - name: mysql3
     static_ips: (( static_ips(1) ))
-  properties:
-    network_name: mysql3
 - name: proxy_z1
   templates: (( base_templates.proxy colocated_jobs.proxy_z1 ))
   instances: (( instance_count_overrides.proxy_z1.instances || 1 ))
@@ -247,8 +253,6 @@ base_jobs:
   networks:
   - name: mysql1
     static_ips: (( static_ips(1) ))
-  properties:
-    network_name: mysql1
 - name: proxy_z2
   templates: (( base_templates.proxy colocated_jobs.proxy_z2 ))
   instances: (( instance_count_overrides.proxy_z2.instances || 1 ))
@@ -256,24 +260,18 @@ base_jobs:
   networks:
   - name: mysql2
     static_ips: (( static_ips(1) ))
-  properties:
-    network_name: mysql2
 - name: cf-mysql-broker_z1
   templates: (( base_templates.broker colocated_jobs.cf-mysql-broker_z1 ))
   instances: (( instance_count_overrides.cf-mysql-broker_z1.instances || 1 ))
   resource_pool: cf-mysql-broker_z1
   networks:
   - name: mysql1
-  properties:
-    network_name: mysql1
 - name: cf-mysql-broker_z2
   templates: (( base_templates.broker colocated_jobs.cf-mysql-broker_z2 ))
   instances: (( instance_count_overrides.cf-mysql-broker_z2.instances || 1 ))
   resource_pool: cf-mysql-broker_z2
   networks:
   - name: mysql2
-  properties:
-    network_name: mysql2
 - name: broker-registrar
   template: broker-registrar
   release: cf-mysql
@@ -292,8 +290,8 @@ base_jobs:
   networks:
   - name: mysql1
   properties: {}
-- name: acceptance-tests
-  template: acceptance-tests
+- name: smoke-tests
+  template: smoke-tests
   release: cf-mysql
   instances: 1
   resource_pool: errands_z1
@@ -303,6 +301,24 @@ base_jobs:
   properties: {}
 - name: bootstrap
   template: bootstrap
+  release: cf-mysql
+  instances: 1
+  resource_pool: errands_z1
+  lifecycle: errand
+  networks:
+  - name: mysql1
+  properties: {}
+- name: rejoin-unsafe
+  template: rejoin-unsafe
+  release: cf-mysql
+  instances: 1
+  resource_pool: errands_z1
+  lifecycle: errand
+  networks:
+  - name: mysql1
+  properties: {}
+- name: verify-cluster-schemas
+  template: verify-cluster-schemas
   release: cf-mysql
   instances: 1
   resource_pool: errands_z1
@@ -328,8 +344,6 @@ default_proxy_ips:
 - (( jobs.proxy_z2.networks.mysql2.static_ips.[0] || nil ))
 # spiff does not allow concating multiple fields of different types
 # without adding new temporary properties
-database_startup_timeout_str: (( "" .properties.cf_mysql.mysql.database_startup_timeout ))
-canary_end_in_sec: (( database_startup_timeout_str "000" ))
 additional_disk_pools: (( iaas_settings.additional_disk_pools || empty_list ))
 additional_releases: (( job_overrides.additional_releases || empty_list ))
 additional_resource_pools: (( iaas_settings.additional_resource_pools || empty_list))

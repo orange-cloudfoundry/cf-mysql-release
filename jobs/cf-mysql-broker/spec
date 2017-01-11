@@ -3,11 +3,14 @@ name: cf-mysql-broker
 
 templates:
   settings.yml.erb: config/settings.yml
+  mylogin.cnf.erb: config/mylogin.cnf
   cf-mysql-broker_ctl.erb: bin/cf-mysql-broker_ctl
+  cf_mysql_broker_setup.sql.erb: config/cf_mysql_broker_setup.sql
   unicorn.conf.rb.erb: config/unicorn.conf.rb
   database.yml.erb: config/database.yml
   quota-enforcer_ctl.erb: bin/quota-enforcer_ctl
-  quota_enforcer_config.yml.erb: bin/quota_enforcer_config.yml
+  quota_enforcer_config.yml.erb: config/quota_enforcer_config.yml
+  quota_enforcer_setup.sql.erb: config/quota_enforcer_setup.sql
   syslog_forwarder.conf.erb: config/syslog_forwarder.conf
   healthcheck.sh.erb: bin/healthcheck.sh
   registrar_settings.yml.erb: config/registrar_settings.yml
@@ -17,10 +20,10 @@ packages:
 - ruby
 - mysqlclient
 - cf-mysql-broker
-- common
+- cf-mysql-common
 - mariadb
 - syslog_aggregator
-- route-registrar
+- cf-mysql-route-registrar
 - quota-enforcer
 
 properties:
@@ -35,6 +38,7 @@ properties:
 
   cf.api_url:
     description: 'URL of the CloudFoundry Cloud Controller'
+    example: 'https://api.your-domain.example.com'
   cf.skip_ssl_validation:
     description: 'Determines whether dashboard verifies SSL certificates when communicating with Cloud Controller and UAA'
     default: false
@@ -43,9 +47,6 @@ properties:
     description: "IP address for syslog aggregator"
   syslog_aggregator.port:
     description: "TCP port of syslog aggregator"
-  syslog_aggregator.all:
-    description: "Define whether forwarders should also send non-mysql syslog activity to the aggregator."
-    default: false
   syslog_aggregator.transport:
     description: "Transport to be used when forwarding logs (tcp|udp|relp)."
     default: "tcp"
@@ -54,7 +55,7 @@ properties:
     description: 'Host (DNS) or IP address used by the broker and bound applications to reach the service'
   cf_mysql.external_host:
     description: 'Host used to register a route for the broker with the router in cf-release via NATS. By registering the broker with Cloud Foundry using this route, and using the router for load balancing, the broker can be horizontally scaled. Domain is typically the same as system domain in cf-release.'
-  
+
   cf_mysql.mysql.port:
     description: 'Port used by the broker and bound applications to reach the service'
     default: 3306
@@ -72,6 +73,8 @@ properties:
     description: 'Size of the ib_log_file used by innodb, in MB'
     default: 1024
 
+  cf_mysql.broker.db_password:
+    description: 'The password for the cf-mysql-broker MySQL user'
   cf_mysql.broker.auth_username:
     description: "Broker's basic auth username"
   cf_mysql.broker.auth_password:
@@ -82,22 +85,37 @@ properties:
     description: 'number of user connections to allow in a plan if not specified'
     default: 40
   cf_mysql.broker.services:
-    description: 'Services and plans offered by the broker'
+    description: 'Array of services, each service contains the list of plans the broker of that service provides'
     example: |
-      plans:
-      - name: 100mb
-        id: REPLACE-WITH-A-UNIQUE-GUID
-        description: Shared MySQL Server
-        max_storage_mb: 100
-        max_user_connections: 20
-      - name: 1gb
-        id: REPLACE-WITH-A-UNIQUE-GUID
-        description: Shared MySQL Server
-        max_storage_mb: 1000
-        max_user_connections: 40
+      - name: REPLACE-WITH-SERVICE-NAME
+        plans:
+        - name: 100mb
+          id: REPLACE-WITH-A-UNIQUE-GUID
+          description: Shared MySQL Server
+          max_storage_mb: 100
+          max_user_connections: 20
+        - name: 1gb
+          id: REPLACE-WITH-A-UNIQUE-GUID
+          description: Shared MySQL Server
+          max_storage_mb: 1000
+          max_user_connections: 40
   cf_mysql.broker.ssl_enabled:
     description: 'Determines use of https in dashboard url and in callback uri for calls to UAA'
     default: true
-  
-  network_name:
-    description: "The name of the network (needed for the syslog aggregator)"
+  cf_mysql.broker.host:
+    description: 'Optional, The ip to be registered with the cf router for the broker. Defaults to the ip of the vm'
+  cf_mysql.broker.port:
+    default: 8081
+    description: "Port for broker"
+  cf_mysql.broker.disable_quota_enforcer:
+    default: false
+    description: 'Disable the Quota Enforcer process'
+
+  cf_mysql.broker.quota_enforcer.password:
+    description: 'The password for the quota-enforcer user'
+  cf_mysql.broker.quota_enforcer.ignored_users:
+    description: 'Array of users that the quota enforcer will not enforce quotas on'
+    default: []
+  cf_mysql.broker.quota_enforcer.pause:
+    description: 'In seconds, the interval that the Quota Enforcer pauses between checks for violators and reformers'
+    default: 1
