@@ -247,3 +247,7 @@ properties:
   cf_mysql.mysql.enable_galera:
     default: true
     description: 'Advanced feature. Only use this when deploying a single MySQL node with no intention to run any other components of cf-mysql-release.'
+
+  cf_mysql.mysql.long_query_time:
+    default: 30
+    description: 'If a query takes longer than this many seconds, the server increments the Slow_queries status variable. If the slow query log is enabled, the query is logged to the slow query log file'
