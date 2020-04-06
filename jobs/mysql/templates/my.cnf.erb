@@ -63,7 +63,7 @@ wsrep_cluster_address           = gcomm://<%= cluster_ips.join(",") %>
 wsrep_node_address              = <%= node_host %>:<%= p('cf_mysql.mysql.galera_port') %>
 wsrep_node_name                 = <%= name %>/<%= index %>
 wsrep_cluster_name              = <%= p('cf_mysql.mysql.cluster_name') %>
-wsrep_sst_method                = xtrabackup-v2
+wsrep_sst_method                = mariabackup
 wsrep_sst_auth                  = <%= p('cf_mysql.mysql.admin_username')%>:<%= p('cf_mysql.mysql.admin_password') %>
 wsrep_max_ws_rows               = <%= p('cf_mysql.mysql.wsrep_max_ws_rows') %>
 wsrep_max_ws_size               = <%= p('cf_mysql.mysql.wsrep_max_ws_size') %>
@@ -129,10 +129,8 @@ userstat                        = 1
 <% end %>
 
 innodb_file_per_table           = ON
-innodb_file_format              = Barracuda
 innodb_default_row_format       = <%= p('cf_mysql.mysql.innodb_default_row_format') %>
 innodb_log_file_size            = <%= p('cf_mysql.mysql.ib_log_file_size')%>MB
-innodb_support_xa               = OFF
 <% if p('cf_mysql.mysql.innodb_large_prefix_enabled') %>
 innodb_large_prefix             = ON
 <% else %>

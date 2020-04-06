@@ -76,6 +76,29 @@ function check_mysql_disk_capacity() {
   fi
 }
 
+function load_MySQL_time_zone_tables() {  
+  set +e
+  /var/vcap/packages/mariadb_ctrl/bin/mysql_daemon.sh stand-alone
+  local Delay=120
+  echo "status" | /var/vcap/packages/mariadb/bin/mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf &>/dev/null
+  local sRC=$?
+  while [ ${sRC} -ne 0 ]; do
+    if [ ${Delay} -eq 0 ]; then
+       break
+    fi
+    sleep 1
+    let Delay=Delay-1
+    echo "status" | /var/vcap/packages/mariadb/bin/mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf &>/dev/null
+    sRC=$?
+  done
+
+  if [ ${Delay} -ne 0 ]; then
+     /var/vcap/packages/mariadb/bin/mysql_tzinfo_to_sql /usr/share/zoneinfo  | /var/vcap/packages/mariadb/bin/mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf mysql
+  fi
+  set -e
+  /var/vcap/packages/mariadb_ctrl/bin/mysql_daemon.sh stop
+}
+
 check_mysql_disk_persistence
 check_mysql_disk_capacity
 
@@ -87,6 +110,9 @@ if ! test -d ${datadir}; then
          --basedir=/var/vcap/packages/mariadb \
          --user=vcap \
          --datadir=${datadir} >> $LOG_FILE 2>> $LOG_FILE
+
+  log "pre-start setup script: loading MySql time zone tables"
+  load_MySQL_time_zone_tables >> $LOG_FILE 2>> $LOG_FILE 
 fi
 chown -R vcap:vcap ${datadir}
 
