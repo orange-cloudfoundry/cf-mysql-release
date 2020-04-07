@@ -34,11 +34,8 @@ output_to_logfiles ${LOG_DIR}
 # logrotate audit logs
 ln -sf /var/vcap/jobs/mysql/config/mysql_audit_logs.logrotate /etc/logrotate.d/mysql_audit_logs
 
-# add xtrabackup to path
-export PATH=$PATH:/var/vcap/packages/xtrabackup/bin
-
-# add perl libraries to perl env
-export PERL5LIB=$PERL5LIB:/var/vcap/packages/xtrabackup/lib/perl/5.18.2
+# add socat to path
+export PATH=$PATH:/var/vcap/packages/socat/bin
 
 ulimit -n <%= p('cf_mysql.mysql.max_open_files') %>
 

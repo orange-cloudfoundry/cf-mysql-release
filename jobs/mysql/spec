@@ -25,7 +25,7 @@ templates:
   server-key.pem.erb: certificates/server-key.pem
 
 packages:
-- xtrabackup
+- socat
 - mariadb
 - mariadb_ctrl
 - galera

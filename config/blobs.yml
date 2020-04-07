@@ -48,31 +48,6 @@ scons/scons-2.3.1.tar.gz:
   size: 499037
   object_id: e3136aa7-9bf6-4c49-a26d-9ebe85665818
   sha: 775e715e49fe5fd8e1d29551a296fdc9267509e7
-xtrabackup/autoconf-2.65.tar.gz:
-  size: 1738880
-  object_id: 12402e0c-14bd-4a31-8344-858c09639f67
-  sha: ae9e1ab046822007f25c88e1d8f2166e065da8c2
-xtrabackup/automake-1.14.1.tar.gz:
-  size: 2240681
-  object_id: 22110fae-0404-48d2-a2a0-869b40172c09
-  sha: 0bb1714b78d70cab9907d2013082978a28f48a46
-xtrabackup/libaio_0.3.110.orig.tar.gz:
-  size: 42270
-  object_id: 10d3be70-6c51-4220-9d46-8de75281fd3d
-  sha: f8f6ed15f22e528f6f415939b07854539e3360e4
-xtrabackup/libev-4.22.tar.gz:
-  size: 530094
-  object_id: 023ba1e4-a21c-44f8-8c7d-51933bb0a3c9
-  sha: b5cc3f6d8d842e23fccc9b27d318ae7fa3d3bf60
-xtrabackup/libtool-2.4.2.tar.gz:
-  size: 2632347
-  object_id: 958f3335-2373-4c4f-9db1-7391a9a7e6f2
-  sha: 22b71a8b5ce3ad86e1094e7285981cae10e6ff88
-xtrabackup/percona-xtrabackup-2.4.8.tar.gz:
-  size: 57965576
-  object_id: ca08f6b1-14a5-45f7-4e57-df362b2fcb8a
-  sha: 5cc6b689b9682923211f9aace7ec6c6d22b69346
-xtrabackup/socat-1.7.3.2.tar.gz:
+socat/socat-1.7.3.2.tar.gz:
   size: 611707
-  object_id: ba6cfda8-0c00-451e-6338-2007ef503d56
   sha: 28eca1f8efeadde3f96c1ac89e553c28d736d41d

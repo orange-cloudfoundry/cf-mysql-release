@@ -23,7 +23,7 @@ For a consolidated view, use a syslog server.
 
 Galera supports multiple methods for
 [State Snapshot Transfer](http://www.percona.com/doc/percona-xtradb-cluster/5.5/manual/state_snapshot_transfer.html).
-We have chosen the `xtrabackup` method, as it has the advantage of keeping the
+We have chosen the `mariabackup` method, as it has the advantage of keeping the
 donor node writeable during SST.
 
 ### InnoDB Redo Log Files

@@ -1,0 +1,7 @@
+---
+name: socat
+
+dependencies:
+
+files:
+  - socat/**/*

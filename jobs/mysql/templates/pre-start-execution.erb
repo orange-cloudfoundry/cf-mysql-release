@@ -28,8 +28,8 @@ if [ ! -f /usr/local/bin/mysql ]; then
   ln -s /var/vcap/packages/mariadb/bin/mysql /usr/local/bin
 fi
 
-# add xtrabackup to path
-export PATH=$PATH:/var/vcap/packages/xtrabackup/bin
+# add socat to path
+export PATH=$PATH:/var/vcap/packages/socat/bin
 
 log "pre-start execution script: starting mariadb_ctrl in prestart mode"
 
