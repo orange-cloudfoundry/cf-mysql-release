@@ -131,11 +131,11 @@ userstat                        = 1
 innodb_file_per_table           = ON
 innodb_default_row_format       = <%= p('cf_mysql.mysql.innodb_default_row_format') %>
 innodb_log_file_size            = <%= p('cf_mysql.mysql.ib_log_file_size')%>MB
-<% if p('cf_mysql.mysql.innodb_large_prefix_enabled') %>
-innodb_large_prefix             = ON
-<% else %>
-innodb_large_prefix             = OFF
-<% end %>
+# <% if p('cf_mysql.mysql.innodb_large_prefix_enabled') %>
+# innodb_large_prefix             = ON
+# <% else %>
+# innodb_large_prefix             = OFF
+# <% end %>
 <% if p('cf_mysql.mysql.innodb_strict_mode') %>
 innodb_strict_mode              = ON
 <% else %>

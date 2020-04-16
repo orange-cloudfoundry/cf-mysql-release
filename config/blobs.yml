@@ -17,9 +17,9 @@ cli/cf-cli_6.36.1_linux_x86-64.tgz:
 galera/galera-25.3.28.tar.gz:
   size: 3390722
   sha: 4ebf29b300a48e30dc3d1aa3f4c98530a8b99f1d
-mariadb/mariadb-10.2.31.tar.gz:
-  size: 73134720
-  sha: 23014293e952612d3e5a1903632faad1e572dfe9
+mariadb/mariadb-10.3.22.tar.gz:
+  size: 72050820
+  sha: f92f517fc2ea893ffb3d599ade219bf0a0045265
 mysqlclient/mariadb-connector-c-3.1.7-src.tar.gz:
   size: 742923
   sha: 5d88983a1ace1885fc22f5bfb1ee28a23187e412
