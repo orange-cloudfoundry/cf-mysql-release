@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
-set -u
+set -eu
 
 mkdir -p ${BOSH_INSTALL_TARGET}/src
 cp -a . ${BOSH_INSTALL_TARGET}/src
@@ -9,6 +8,8 @@ cp -a . ${BOSH_INSTALL_TARGET}/src
 export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.14-linux)
 export GOPATH=${BOSH_INSTALL_TARGET}
 export PATH=${GOROOT}/bin:${GOPATH}/bin:${PATH}
+export GOCACHE=/var/vcap/data/golang-1.14-linux/cache
+
 
 go install github.com/cloudfoundry-incubator/cf-mysql-cluster-health-logger
 

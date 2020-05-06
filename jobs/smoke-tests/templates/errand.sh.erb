@@ -9,6 +9,7 @@ cd ${REPO}
 
 export GOPATH=/var/vcap/packages/acceptance-tests
 export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.14-linux)
+export GOCACHE=/var/vcap/data/golang-1.14-linux/cache
 export PATH=/var/vcap/packages/cli/bin:$GOPATH/bin:$GOROOT/bin:$PWD/bin:$PATH
 
 # smoke tests shell out to cf cli

@@ -7,5 +7,6 @@ set -u # report the usage of uninitialized variables
 export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.14-linux)
 export GOPATH=${BOSH_INSTALL_TARGET}
 export PATH=${GOROOT}/bin:${GOPATH}/bin:${PATH}
+export GOCACHE=/var/vcap/data/golang-1.14-linux/cache
 
 go build -o "${GOPATH}/gra-log-purger-executable" ./gra-log-purger
