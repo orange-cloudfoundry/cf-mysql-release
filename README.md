@@ -123,10 +123,10 @@ To trust self-signed SSL certificates, you can change `jobs.cf-mysql-broker.skip
 <a name='downloading-a-stable-release'></a>
 ## Downloading a Stable Release
 
-Stable releases, also known as final releases, are available for general use. Release notes and source code are available on [github](https://github.com/cloudfoundry/cf-mysql-release/releases).
+Stable releases, also known as final releases, are available for general use. Release notes and source code are available on [github](https://github.com/orange-cloudfoundry/cf-mysql-release/releases).
 Instructions for uploading a final release to your BOSH director can be found on [bosh.io](https://bosh.io/releases/github.com/cloudfoundry/cf-mysql-release).
 
-**Note:** If your BOSH director's able to access the Internet, you don't need to download and upload a release to your BOSH director. When using [cf-mysql-deployment](https://github.com/cloudfoundry/cf-mysql-deployment), the correct release is referenced in the manifest, and will be automatically retrieved by the BOSH director.
+**Note:** If your BOSH director's able to access the Internet, you don't need to download and upload a release to your BOSH director. When using [cf-mysql-deployment](https://github.com/orange-cloudfoundry/cf-mysql-deployment), the correct release is referenced in the manifest, and will be automatically retrieved by the BOSH director.
 
 <a name='development'></a>
 ## Development
@@ -158,13 +158,13 @@ as you switch in and out of the directory.
 <a name='release-notes'></a>
 ## Release Notes, Known Issues, and Documentation
 
-[Release Notes](https://github.com/cloudfoundry/cf-mysql-release/releases/)
+[Release Notes](https://github.com/orange-cloudfoundry/cf-mysql-release/releases/)
 
 [Known Issues](/docs/known-issues.md)
 
-For more information, check out the [documentation](https://github.com/cloudfoundry/cf-mysql-release/tree/master/docs).
+For more information, check out the [documentation](https://github.com/orange-cloudfoundry/cf-mysql-release/tree/master/docs).
 
 <a name='deploying'></a>
 ## Deploying
 
-See https://github.com/cloudfoundry/cf-mysql-deployment to deploy cf-mysql release.
+See https://github.com/orange-cloudfoundry/cf-mysql-deployment to deploy cf-mysql release.

@@ -11,3 +11,6 @@ The clustering plugin used in this release (Galera) does not support replication
 
 ### Max User Connections
 When updating the max_user_connections property for an existing plan, the connections currently open will not be affected (ie if you have decreased from 20 to 40, users with 40 open connections will keep them open). To force the changes upon users with open connections, an operator can restart the proxy job as this will cause the connections to reconnect and stay within the limit.  Otherwise, if any connection above the limit is reset it won't be able to reconnect, so the number of connections will eventually converge on the new limit.
+
+### Loading Time Zone Tables
+For all new deployments made with the V37.1 release, the TimeZone tables are automatically populated. On the other hand, for clusters created with an earlier release, if you want to use the data from the Time zone tables, it is necessary to load them manually.
