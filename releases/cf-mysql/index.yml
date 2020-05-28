@@ -35,6 +35,8 @@ builds:
     version: "32"
   36f28a69-36e2-4aa4-9009-77abd333535c:
     version: "11"
+  3f33025b-c99b-43ae-6a88-5aeef1ae732d:
+    version: 37.1.0
   40a152d7ba6f04700c7f454d50c32f2e03d2c7e3:
     version: "1"
   5a380620-a7cb-4ad7-6d48-5e6aa233e05f:
