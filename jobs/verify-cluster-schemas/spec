@@ -2,7 +2,7 @@
 name: verify-cluster-schemas
 packages:
   - mariadb
-  - ruby
+  - ruby-2.7.3-r0.44.0
   - cluster-schema-verifier
 consumes:
 - name: mysql
