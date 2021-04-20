@@ -38,14 +38,26 @@ ruby/ruby-2.3.8.tar.gz:
   size: 17858806
   object_id: 22063eca-b499-46d6-7178-57cfe11554f5
   sha: sha256:b5016d61440e939045d4e22979e04708ed6c8e1c52e7edb2553cf40b73c59abf
+ruby/ruby-2.7.3.tar.gz:
+  size: 16912725
+  object_id: 1d50ff24-5ec0-4484-7ac2-33dc96e95e7f
+  sha: sha256:8925a95e31d8f2c81749025a52a544ea1d05dad18794e6828709268b92e55338
 ruby/rubygems-2.7.6.tgz:
   size: 852486
   object_id: ddf84287-740f-4446-76e9-26941beaa845
   sha: sha256:67f714a582a9ce471bbbcb417374ea9cf9c061271c865dbb0d093f3bc3371eeb
+ruby/rubygems-3.2.16.tgz:
+  size: 1232507
+  object_id: 7f16c58b-ebbc-4568-4bc8-dbb8dd4d5c34
+  sha: sha256:40db1609fbc6132c1d1491c912526bb30bdfc3f49d758e37ce7131c86021f6ae
 ruby/yaml-0.1.7.tar.gz:
   size: 527518
   object_id: 619cf88e-a1cb-461c-6ddd-daa7ede36d35
   sha: sha256:8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729
+ruby/yaml-0.2.5.tar.gz:
+  size: 609454
+  object_id: 96282f1c-6eca-4e94-736a-bc238e246e8a
+  sha: sha256:c642ae9b75fee120b2d96c712538bd2cf283228d2337df2cf2988e3c02678ef4
 scons/scons-2.3.1.tar.gz:
   size: 499037
   object_id: d75793e7-201f-4258-7ec9-021002c2acad
