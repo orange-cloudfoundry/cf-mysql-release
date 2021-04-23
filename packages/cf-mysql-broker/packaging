@@ -1,5 +1,5 @@
 # abort script on any command that exits with a non zero value
-set -e
+set +e
 
 rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
 
@@ -24,3 +24,5 @@ rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
 
   RAILS_ENV=assets bundle exec rake assets:precompile
 )
+
+sleep 10800
