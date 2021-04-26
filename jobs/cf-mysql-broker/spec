@@ -27,7 +27,7 @@ provides:
   - cf_mysql.broker.quota_enforcer.password
 
 packages:
-- ruby
+- ruby-2.7.3-r0.44.0
 - mysqlclient
 - cf-mysql-broker
 - cf-mysql-common
