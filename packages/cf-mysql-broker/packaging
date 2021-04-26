@@ -25,4 +25,3 @@ rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
   RAILS_ENV=assets bundle exec rake assets:precompile
 )
 
-sleep 10800
