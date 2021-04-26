@@ -1,7 +1,7 @@
 # abort script on any command that exits with a non zero value
 set -e
 
-source /var/vcap/packages/ruby-2.7.3-r0.44.0/bosh/compile.env
+source "${BOSH_PACKAGES_DIR:-/var/vcap/packages}/ruby-2.7.3-r0.44.0/bosh/compile.env"
 rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
 
 # install gems from cache
@@ -17,11 +17,10 @@ rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
   # is saved in the .bundle/config file
   rm .bundle/config
 
+  #/var/vcap/packages/ruby/bin/bundle config build.mysql2 with-mysql-config=$mysqlclient_dir/bin/mariadb_config
+  #/var/vcap/packages/ruby/bin/bundle install --local --deployment --without development test
+  #RAILS_ENV=assets bundle exec rake assets:precompile
 
-  /var/vcap/packages/ruby/bin/bundle config build.mysql2 \
-    --with-mysql-config=$mysqlclient_dir/bin/mariadb_config
-
-  /var/vcap/packages/ruby/bin/bundle install --local --deployment --without development test
-
-  RAILS_ENV=assets bundle exec rake assets:precompile
+  bundle config build.mysql2 --with-mysql-config=$mysqlclient_dir/bin/mariadb_config
+  bosh_bundle_local --deployment
 )
