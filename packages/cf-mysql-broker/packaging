@@ -1,6 +1,7 @@
 # abort script on any command that exits with a non zero value
 set -e
 
+source /var/vcap/packages/ruby-2.7.3-r0.44.0/bosh/compile.env
 rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
 
 # install gems from cache
