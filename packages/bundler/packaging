@@ -1,2 +1,3 @@
 set -e
 
+cp bundler/bundler-1.17.3.gem ${BOSH_INSTALL_TARGET}/.

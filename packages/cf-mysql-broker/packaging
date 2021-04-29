@@ -1,5 +1,5 @@
 # abort script on any command that exits with a non zero value
-set +e
+set -e
 
 source "${BOSH_PACKAGES_DIR:-/var/vcap/packages}/ruby-2.7.3-r0.44.0/bosh/compile.env"
 rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
@@ -12,7 +12,6 @@ rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
   export PATH=/var/vcap/packages/ruby/bin:$PATH;
 
   mysqlclient_dir=/var/vcap/packages/mysqlclient
-  bundler_dir=/var/vcap/packages/bundler
 
   # Need to remove the "--no-install" directive which
   # is saved in the .bundle/config file
@@ -22,10 +21,9 @@ rsync -a cf-mysql-broker/ ${BOSH_INSTALL_TARGET}
   #/var/vcap/packages/ruby/bin/bundle install --local --deployment --without development test
   #RAILS_ENV=assets bundle exec rake assets:precompile
 
-  gem install --local ${bundler_dir}/bundler-1.17.3.gem
+  gem install --local ${BOSH_INSTALL_TARGET}/bundler-1.17.3.gem
 
   bundle config build.mysql2 --with-mysql-config=$mysqlclient_dir/bin/mariadb_config
   bosh_bundle_local --deployment
 
-  sleep 10800
 )
