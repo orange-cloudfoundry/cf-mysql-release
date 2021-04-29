@@ -18,6 +18,7 @@ export JOB_INDEX=<%= index %>
 
 source /var/vcap/packages/cf-mysql-common/pid_utils.sh
 source /var/vcap/packages/cf-mysql-common/logging.sh
+source "${BOSH_PACKAGES_DIR:-/var/vcap/packages}/ruby-2.7.3-r0.44.0/bosh/runtime.env"
 
 output_to_logfiles ${LOG_DIR}
 
