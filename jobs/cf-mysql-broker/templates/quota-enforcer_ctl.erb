@@ -10,6 +10,7 @@ pidfile=$run_dir/quota-enforcer.pid
 oldpidfile=/var/vcap/sys/run/quota-enforcer/quota-enforcer.pid
 
 source /var/vcap/packages/cf-mysql-common/pid_utils.sh
+source "${BOSH_PACKAGES_DIR:-/var/vcap/packages}/ruby-2.7.3-r0.44.0/bosh/runtime.env"
 
 case $1 in
 

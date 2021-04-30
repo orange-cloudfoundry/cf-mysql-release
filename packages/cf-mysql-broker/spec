@@ -2,7 +2,8 @@
 name: cf-mysql-broker
 
 dependencies:
-- ruby
+- ruby-2.7.3-r0.44.0
+- bundler
 - mysqlclient
 
 files:
