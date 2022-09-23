@@ -1,10 +1,10 @@
 diff --git a/scripts/wsrep_sst_mariabackup.sh b/scripts/wsrep_sst_mariabackup.sh
-index 4eb9917d341..d2d3c0003ce 100644
+index 63ef8be8690..8a652b4c4e4 100644
 --- a/scripts/wsrep_sst_mariabackup.sh
 +++ b/scripts/wsrep_sst_mariabackup.sh
-@@ -1037,6 +1037,19 @@ then
-     if [ ! -r "${STATDIR}/${IST_FILE}" ]
-     then
+@@ -1342,6 +1342,19 @@ else # joiner
+ 
+     if [ ! -r "$STATDIR/$IST_FILE" ]; then
  
 +        if [ ${DISABLE_SST:=0} -eq 1 ]
 +        then
@@ -19,6 +19,7 @@ index 4eb9917d341..d2d3c0003ce 100644
 +            exit 1
 +        fi
 +
-         if [[ -d ${DATA}/.sst ]];then
-             wsrep_log_info "WARNING: Stale temporary SST directory: ${DATA}/.sst from previous state transfer. Removing"
-             rm -rf ${DATA}/.sst
+         adjust_progress
+         if [ -n "$pcmd" ]; then
+             if [ -n "$rcmd" ]; then
+
