@@ -182,9 +182,6 @@ innodb_lock_wait_timeout        = <%= innodb_lock_wait_timeout %>
 <% if_p('cf_mysql.mysql.innodb_buffer_pool_size') do |innodb_buffer_pool_size| %>
 innodb_buffer_pool_size         = <%= innodb_buffer_pool_size %>
 <% end %>
-<% if_p('cf_mysql.mysql.innodb_buffer_pool_instances') do |innodb_buffer_pool_instances| %>
-innodb_buffer_pool_instances    = <%= innodb_buffer_pool_instances %>
-<% end %>
 <% if_p('cf_mysql.mysql.innodb_flush_method') do |innodb_flush_method| %>
 innodb_flush_method             = <%= innodb_flush_method %>
 <% end %>

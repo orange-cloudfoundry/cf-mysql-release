@@ -1,7 +1,7 @@
 # abort script on any command that exits with a non zero value
 set -e
 
-GALERA_VERSION=25.3.37
+GALERA_VERSION=26.4.12
 
 export HOME=/var/vcap/data
 cd galera
@@ -9,22 +9,17 @@ tar xfz galera-${GALERA_VERSION}.tar.gz
 cd galera-${GALERA_VERSION}
 
 #
-# Scons build system cannot be easily configured to use
-# non-standard locations for headers and libraries. That's why
-# we copy package files to the usual/standard location
-#
 cp -R /var/vcap/packages/boost/lib/* /usr/lib/
 cp -R /var/vcap/packages/boost/include/* /usr/include/
 cp -R /var/vcap/packages/check/lib/* /usr/lib/
 cp -R /var/vcap/packages/check/include/* /usr/include/
 
-PATH=$PATH:/var/vcap/packages/python/bin
 
 #
 # Go Agent cannot handle more than 10MB output, so trim it
 #
 set +e
-/var/vcap/packages/scons/bin/scons tests=0 > build.out 2> build.err
+./scripts/build.sh >  build.out 2> build.err
 BUILD_EXIT_CODE=$?
 set -e
 
@@ -34,5 +29,6 @@ if [ $BUILD_EXIT_CODE -ne 0 ]; then
 fi
 tail -n 1000 build.out
 
+cp /var/vcap/packages/boost/lib/libboost_program_options.so.1.59.0 ${BOSH_INSTALL_TARGET}
 cp libgalera_smm.so ${BOSH_INSTALL_TARGET}
 cp garb/garbd ${BOSH_INSTALL_TARGET}

@@ -18,14 +18,15 @@ cli/cf-cli_6.36.1_linux_x86-64.tgz:
   size: 5910456
   object_id: d9bab44e-781f-438c-722f-2198de17fc37
   sha: sha256:d5e59258183939305f44c471dab41a000290446399cc9b206b107c7bdb8ce180
-galera/galera-25.3.37.tar.gz:
-  size: 3389858
-  object_id: 2a7f0cb8-df4a-435d-5a7b-5dd2663d6bbb
-  sha: sha256:14b20e3def164bfe23e11b8f17da46a0d366fcb24a42ff517e7a0734597a7f62
-mariadb/mariadb-10.3.36.tar.gz:
-  size: 73944352
-  object_id: 280e61c6-49d8-4bbe-43b2-9733585c9db6
-  sha: sha256:003c497c387a28184acfb4fd30e4150ea1f0300004845fdcf48e5122e36c5dc6
+galera/galera-26.4.12.tar.gz:
+  size: 3619535
+  sha: sha256:30fb940d5442b3a6d59832a1ad7898ef29cb23d012fc8f28bf8e51e219e38ad0
+mariadb/mariadb-10.6.10.tar.gz:
+  size: 96453293
+  sha: sha256:6ad9fa86f0c85c8eeafad2643549d5ff5dd2872002964e754752de91863aa3b7
+mariadb/pcre2-10.40.zip:
+  size: 2622021
+  sha: sha256:b6ee01732f0e41296e60a00ce37fbed1c4955ae7e7625b1fd29a55605c9493b4
 mysqlclient/mariadb-connector-c-3.3.2-src.tar.gz:
   size: 1382004
   object_id: aa57c68f-ecc1-4f8c-6f95-8125548f2b03
@@ -34,10 +35,6 @@ pcre-8.35.tar.gz:
   size: 1996552
   object_id: 49abeda0-df2b-404f-775b-d1b4c899e8ff
   sha: sha256:1c9ee292943ba2737f127b481a3f72f44c13fbd09a7b5b4eb8fa58650cfa56a0
-python/Python-2.7.13.tgz:
-  size: 17076672
-  object_id: 2720e9bd-6c4a-4b86-46c5-4550536fd749
-  sha: sha256:a4f05a0720ce0fd92626f0278b6b433eee9a6173ddf2bced7957dfb599a5ece1
 ruby/ruby-2.3.8.tar.gz:
   size: 17858806
   object_id: 22063eca-b499-46d6-7178-57cfe11554f5
@@ -50,11 +47,6 @@ ruby/yaml-0.1.7.tar.gz:
   size: 527518
   object_id: 619cf88e-a1cb-461c-6ddd-daa7ede36d35
   sha: sha256:8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729
-scons/scons-2.3.1.tar.gz:
-  size: 499037
-  object_id: d75793e7-201f-4258-7ec9-021002c2acad
-  sha: sha256:091ab468f8e6084c30f3ae9fd48828e3884021401cfef4b713d13161ba120201
-socat/socat-1.7.3.2.tar.gz:
-  size: 611707
-  object_id: e11010b3-becd-4c08-787c-dbf02005ebb4
-  sha: sha256:ce3efc17e3e544876ebce7cd6c85b3c279fda057b2857fcaaf67b9ab8bdaf034
+socat/socat-1.7.4.3.tar.gz:
+  size: 655520
+  sha: sha256:d697245144731423ddbbceacabbd29447089ea223e9a439b28f9ff90d0dd216e

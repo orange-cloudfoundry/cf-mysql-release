@@ -1,25 +1,23 @@
 diff --git a/scripts/wsrep_sst_mariabackup.sh b/scripts/wsrep_sst_mariabackup.sh
-index 63ef8be8690..8a652b4c4e4 100644
+index 63ef8be8690..835cd6350dd 100644
 --- a/scripts/wsrep_sst_mariabackup.sh
 +++ b/scripts/wsrep_sst_mariabackup.sh
-@@ -1342,6 +1342,19 @@ else # joiner
+@@ -1341,7 +1341,18 @@ else # joiner
+     fi
  
      if [ ! -r "$STATDIR/$IST_FILE" ]; then
- 
-+        if [ ${DISABLE_SST:=0} -eq 1 ]
++	if [ ${DISABLE_SST:=0} -eq 1 ]
 +        then
 +            wsrep_log_error "#####################################################################################"
 +            wsrep_log_error "SST disabled due to danger of data loss. Verify data and run the rejoin-unsafe errand"
 +            wsrep_log_error "#####################################################################################"
-+
+ 
 +            if [ -n "${INTERRUPT_NOTIFY_CMD:=}" ]
 +            then
 +              ${INTERRUPT_NOTIFY_CMD}
 +            fi
 +            exit 1
 +        fi
-+
          adjust_progress
          if [ -n "$pcmd" ]; then
              if [ -n "$rcmd" ]; then
-

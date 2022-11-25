@@ -3,8 +3,9 @@ set -e
 
 NPROC="$(nproc)"
 
-MARIADB_VERSION=10.3.36
+MARIADB_VERSION=10.6.10
 MY_DIR=$(pwd)
+
 
 tar xzf mariadb/mariadb-${MARIADB_VERSION}.tar.gz
 (
@@ -13,8 +14,9 @@ tar xzf mariadb/mariadb-${MARIADB_VERSION}.tar.gz
 
   patch -p1 < ${MY_DIR}/mariadb-patch/add_sst_interrupt.patch
 
-  mkdir bld
+  mkdir -p bld/extra/pcre2/src
   cd bld
+  cp ../../mariadb/pcre2-10.40.zip ./extra/pcre2/src
 
   cmake .. \
       -DCMAKE_INSTALL_PREFIX=${BOSH_INSTALL_TARGET} \
@@ -52,4 +54,5 @@ tar xzf mariadb/mariadb-${MARIADB_VERSION}.tar.gz
   echo -n "${MARIADB_VERSION}-MariaDB" > ${BOSH_INSTALL_TARGET}/VERSION
   cp /var/vcap/packages/galera/garbd ${BOSH_INSTALL_TARGET}/bin/
   cp /var/vcap/packages/galera/libgalera_smm.so ${BOSH_INSTALL_TARGET}/lib/plugin/
+  cp /var/vcap/packages/galera/libboost_program_options.so.1.59.0 ${BOSH_INSTALL_TARGET}/lib/
 )

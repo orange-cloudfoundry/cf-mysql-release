@@ -5,7 +5,7 @@ run_dir=/var/vcap/sys/run/garbd
 log_dir=/var/vcap/sys/log/garbd
 package_dir=/var/vcap/packages/mariadb
 pidfile=$run_dir/garbd.pid
-
+cp ${package_dir}/lib/libboost_program_options.so.* /usr/lib
 source /var/vcap/packages/cf-mysql-common/pid_utils.sh
 
 case $1 in

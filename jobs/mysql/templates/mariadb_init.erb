@@ -23,7 +23,7 @@ DELETE FROM mysql.user WHERE User='root';
 <% hosts.each do |host| %>
 CREATE USER IF NOT EXISTS '<%= p('cf_mysql.mysql.admin_username') %>'@'<%= host %>' IDENTIFIED BY '<%= p('cf_mysql.mysql.admin_password') %>';
 GRANT ALL PRIVILEGES ON *.* TO '<%= p('cf_mysql.mysql.admin_username') %>'@'<%= host %>' WITH GRANT OPTION;
-
+SET PASSWORD FOR '<%= p('cf_mysql.mysql.admin_username') %>'@'<%= host %>' = PASSWORD('<%= p('cf_mysql.mysql.admin_password') %>');
   <% if p('cf_mysql.mysql.roadmin_enabled') %>
 CREATE USER IF NOT EXISTS 'roadmin'@'<%= host %>' IDENTIFIED BY '<%= p('cf_mysql.mysql.roadmin_password') %>';
 SET PASSWORD FOR 'roadmin'@'<%= host %>' = PASSWORD('<%= p('cf_mysql.mysql.roadmin_password') %>');
@@ -31,7 +31,7 @@ GRANT SELECT, PROCESS, REPLICATION CLIENT ON *.* TO 'roadmin'@'<%= host %>';
   <% end %>
 <% end %>
 
-UPDATE mysql.user SET Password=PASSWORD('<%= p('cf_mysql.mysql.admin_password') %>') WHERE User='<%= p('cf_mysql.mysql.admin_username') %>';
+--UPDATE mysql.user SET Password=PASSWORD('<%= p('cf_mysql.mysql.admin_password') %>') WHERE User='<%= p('cf_mysql.mysql.admin_username') %>';
 DELETE FROM mysql.user WHERE User='<%= p('cf_mysql.mysql.admin_username') %>' AND Host NOT IN (<%= quoted_hosts_string %>);
 
 DELETE FROM mysql.user WHERE User='roadmin' AND Host NOT IN (<%= quoted_hosts_string %>);

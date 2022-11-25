@@ -7,7 +7,7 @@
 	branch = cf-mysql-no-bpm
 [submodule "src/github.com/cloudfoundry/mariadb_ctrl"]
 	path = src/github.com/cloudfoundry/mariadb_ctrl
-	url = https://github.com/cloudfoundry/mariadb_ctrl.git
+	url = http://github.com/cloudfoundry/mariadb_ctrl
 	branch = master
 [submodule "src/github.com/cloudfoundry-incubator/switchboard"]
 	path = src/github.com/cloudfoundry-incubator/switchboard
