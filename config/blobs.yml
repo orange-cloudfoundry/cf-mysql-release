@@ -2,10 +2,6 @@ boost/boost_1_59_0.tar.gz:
   size: 83709983
   object_id: 8a810d08-f13a-4901-60c9-5c9ac943810c
   sha: sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
-bundler/bundler-1.17.3.gem:
-  size: 364032
-  object_id: 8fe74041-bf20-416d-448e-9ce021be11b1
-  sha: sha256:bc4bf75b548b27451aa9f443b18c46a739dd22ad79f7a5f90b485376a67dc352
 check/check-0.9.13.tar.gz:
   size: 752880
   object_id: f67fce51-7430-4e61-7676-badef38cf33b
@@ -31,22 +27,6 @@ mysqlclient/mariadb-connector-c-3.3.2-src.tar.gz:
   size: 1382004
   object_id: aa57c68f-ecc1-4f8c-6f95-8125548f2b03
   sha: sha256:7e0722e07d30bb906fac9fe10fb582cde1e148e05a83d9ca7b6fcc884b68fbce
-pcre-8.35.tar.gz:
-  size: 1996552
-  object_id: 49abeda0-df2b-404f-775b-d1b4c899e8ff
-  sha: sha256:1c9ee292943ba2737f127b481a3f72f44c13fbd09a7b5b4eb8fa58650cfa56a0
-ruby/ruby-2.3.8.tar.gz:
-  size: 17858806
-  object_id: 22063eca-b499-46d6-7178-57cfe11554f5
-  sha: sha256:b5016d61440e939045d4e22979e04708ed6c8e1c52e7edb2553cf40b73c59abf
-ruby/rubygems-2.7.6.tgz:
-  size: 852486
-  object_id: ddf84287-740f-4446-76e9-26941beaa845
-  sha: sha256:67f714a582a9ce471bbbcb417374ea9cf9c061271c865dbb0d093f3bc3371eeb
-ruby/yaml-0.1.7.tar.gz:
-  size: 527518
-  object_id: 619cf88e-a1cb-461c-6ddd-daa7ede36d35
-  sha: sha256:8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729
 socat/socat-1.7.4.3.tar.gz:
   size: 655520
   sha: sha256:d697245144731423ddbbceacabbd29447089ea223e9a439b28f9ff90d0dd216e

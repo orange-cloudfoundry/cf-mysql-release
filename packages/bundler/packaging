@@ -1,7 +1,0 @@
-set -e
-
-BUNDLER_DIR=${BOSH_INSTALL_TARGET}/bundler
-
-
-cp bundler/bundler-1.17.3.gem ${BOSH_INSTALL_TARGET}/.
-cp -a bundler/* ${BOSH_INSTALL_TARGET}

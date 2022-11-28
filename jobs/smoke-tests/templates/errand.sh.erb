@@ -8,9 +8,10 @@ REPO=/var/vcap/packages/acceptance-tests/src/github.com/cloudfoundry-incubator/c
 cd ${REPO}
 
 export GOPATH=/var/vcap/packages/acceptance-tests
-export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.14-linux)
-export GOCACHE=/var/vcap/data/golang-1.14-linux/cache
+export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.19-linux)
+export GOCACHE=/var/vcap/data/golang-1.19-linux/cache
 export PATH=/var/vcap/packages/cli/bin:$GOPATH/bin:$GOROOT/bin:$PWD/bin:$PATH
+export GO111MODULE=off
 
 # smoke tests shell out to cf cli
 export CF_DIAL_TIMEOUT=30

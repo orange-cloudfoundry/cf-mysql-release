@@ -4,9 +4,10 @@ set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
 #compile
-export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.14-linux)
+export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.19-linux)
 export GOPATH=${BOSH_INSTALL_TARGET}
 export PATH=${GOROOT}/bin:${GOPATH}/bin:${PATH}
-export GOCACHE=/var/vcap/data/golang-1.14-linux/cache
+export GOCACHE=/var/vcap/data/golang-1.19-linux/cache
+export GO111MODULE=off
 
 go build -o "${GOPATH}/gra-log-purger-executable" ./gra-log-purger

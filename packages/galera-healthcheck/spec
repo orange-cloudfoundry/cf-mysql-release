@@ -1,7 +1,7 @@
 ---
 name: galera-healthcheck
 dependencies:
-  - golang-1.14-linux
+  - golang-1.19-linux
 files:
   - github.com/cloudfoundry-incubator/galera-healthcheck/**/*.go
 excluded_files:

@@ -4,10 +4,11 @@ set -eux
 mkdir -p ${BOSH_INSTALL_TARGET}/src
 cp -a . ${BOSH_INSTALL_TARGET}/src
 
-export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.14-linux)
+export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.19-linux)
 export GOPATH=${BOSH_INSTALL_TARGET}
 export PATH=${GOROOT}/bin:${GOPATH}/bin:${PATH}
-export GOCACHE=/var/vcap/data/golang-1.14-linux/cache
+export GOCACHE=/var/vcap/data/golang-1.19-linux/cache
+export GO111MODULE=off
 
 go build -o $GOPATH/bin/mariadb_ctrl github.com/cloudfoundry/mariadb_ctrl/cmd/start
 go build -o $GOPATH/bin/mariadb_ctrl-prestart github.com/cloudfoundry/mariadb_ctrl/cmd/prestart
