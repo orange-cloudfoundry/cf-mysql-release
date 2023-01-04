@@ -81,7 +81,9 @@ case $1 in
         >> $LOG_DIR/cf-mysql-broker.log 2>&1"
 
     popd
-
+    cd  $PACKAGE_DIR
+    su - vcap -p -c -o pipefail "PATH=$PATH  EDITOR='code' bundle exec rails credentials:edit >> $LOG_DIR/cf-mysql-broker.log 2>&1 "
+    
     su - vcap -p -c -o pipefail "PATH=$PATH bundle exec unicorn -c $JOB_DIR/config/unicorn.conf.rb \
         >> $LOG_DIR/cf-mysql-broker.log 2>&1 &"
     ;;

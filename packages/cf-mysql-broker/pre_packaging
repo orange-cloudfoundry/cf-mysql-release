@@ -24,6 +24,8 @@ pushd ${BUILD_DIR}/cf-mysql-broker
   rm -rf ./vendor/cache/ruby
   rm -rf ./vendor/cache/vendor
   bundle config --delete NO_INSTALL
+  bundle config --delete bin
+  ./bin/rails app:update:bin
 
   rm -rf spec
 popd
