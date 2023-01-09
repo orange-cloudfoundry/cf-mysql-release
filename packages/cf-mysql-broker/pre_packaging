@@ -20,12 +20,10 @@ pushd ${BUILD_DIR}/cf-mysql-broker
     echo "ERROR: Failed to run 'bundle package' after 3 attempts"
     exit "${exit_code}"
   fi
-
+  
   rm -rf ./vendor/cache/ruby
   rm -rf ./vendor/cache/vendor
   bundle config --delete NO_INSTALL
-  bundle config --delete bin
-  ./bin/rails app:update:bin
 
   rm -rf spec
 popd
