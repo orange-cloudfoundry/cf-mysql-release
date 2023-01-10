@@ -51,6 +51,8 @@ builds:
     version: 36.19.0
   726adbb6-be59-46ca-ad1f-90eb26cbdc81:
     version: "28"
+  7d3f063a-8b9a-451a-4c5a-7203a90147cc:
+    version: 39.0.1
   7e027555-d854-4f49-73ff-90a258805b5e:
     version: 38.0.0
   80275d6bdb0016dc7a9e83410222761620393ad0:
