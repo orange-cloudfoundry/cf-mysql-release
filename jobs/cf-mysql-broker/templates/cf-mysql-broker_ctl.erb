@@ -37,14 +37,13 @@ case $1 in
     chown -R vcap:vcap $LOG_DIR
 
     pushd $PACKAGE_DIR
+      # Needed because rake db:migrate attempts to rewrite schema.rb file
+      # which is currently owned by root
+      #
+      # Needs to live here instead of above because chown -R does not follow symlinks
+      chown -R vcap:vcap .
       # Run the migrations only on the first node
       if [ $JOB_INDEX -eq 0 ]; then
-          # Needed because rake db:migrate attempts to rewrite schema.rb file
-          # which is currently owned by root
-          #
-          # Needs to live here instead of above because chown -R does not follow symlinks
-          chown -R vcap:vcap .
-
           # Create DB and run migrations
           set +e
           su - vcap -p -c -o pipefail "PATH=$PATH bundle exec rake db:create \
@@ -80,11 +79,11 @@ case $1 in
       su - vcap -p -c -o pipefail "PATH=$PATH bundle exec rake table_locks:update_table_lock_permissions \
         >> $LOG_DIR/cf-mysql-broker.log 2>&1"
 
-    popd
-    cd  $PACKAGE_DIR
     su - vcap -p -c -o pipefail "PATH=$PATH  ./bin/rails app:update:bin >> $LOG_DIR/update_rails.log 2>&1 "
+    rm $PACKAGE_DIR/config/master.key  $PACKAGE_DIR/config/credentials.yml.enc
     su - vcap -p -c -o pipefail "PATH=$PATH  EDITOR='code' ./bin/rails credentials:edit >> $LOG_DIR/cf-mysql-broker.log 2>&1 "
-    
+
+    popd
     su - vcap -p -c -o pipefail "PATH=$PATH bundle exec unicorn -c $JOB_DIR/config/unicorn.conf.rb \
         >> $LOG_DIR/cf-mysql-broker.log 2>&1 &"
     ;;
