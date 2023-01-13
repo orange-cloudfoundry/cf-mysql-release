@@ -80,7 +80,8 @@ case $1 in
         >> $LOG_DIR/cf-mysql-broker.log 2>&1"
 
     su - vcap -p -c -o pipefail "PATH=$PATH  ./bin/rails app:update:bin >> $LOG_DIR/update_rails.log 2>&1 "
-    rm $PACKAGE_DIR/config/master.key  $PACKAGE_DIR/config/credentials.yml.enc
+    [ -f $PACKAGE_DIR/config/master.key ] && rm $PACKAGE_DIR/config/master.key
+    [ -f $PACKAGE_DIR/config/credentials.yml.enc ] && rm $PACKAGE_DIR/config/credentials.yml.enc
     su - vcap -p -c -o pipefail "PATH=$PATH  EDITOR='code' ./bin/rails credentials:edit >> $LOG_DIR/cf-mysql-broker.log 2>&1 "
 
     popd
