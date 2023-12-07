@@ -1,6 +1,18 @@
 # abort script on any command that exits with a non zero value
 set -e
 
+
+echo "--- Workaround hardcoded expired galera cert with set date back in past ----"
+set -x
+! service chrony status
+! service chrony stop
+! date -s '2023-11-20 11:31:30'
+! date
+set +x
+echo "--- Workaround step 1 completed----"
+
+
+
 GALERA_VERSION=26.4.12
 
 export HOME=/var/vcap/data
@@ -19,26 +31,7 @@ cp -R /var/vcap/packages/check/include/* /usr/include/
 # Go Agent cannot handle more than 10MB output, so trim it
 #
 set +e
-
-echo "--- Workaround hardcoded expired galera cert with set date back in past ----"
-set -x
-! service chrony status
-! service chrony stop
-! date -s '2023-11-20 11:31:30'
-! date
-set +x
-echo "--- Workaround step 1 completed----"
-
 ./scripts/build.sh >  build.out 2> build.err
-
-echo "--- Revert Workaround hardcoded expired galera cert: set date back in sync----"
-set -x
-! service chrony start
-! date
-set +x
-echo "--- Workaround hardcoded expired galera cert is complete ----"
-
-
 BUILD_EXIT_CODE=$?
 set -e
 
@@ -47,6 +40,14 @@ if [ $BUILD_EXIT_CODE -ne 0 ]; then
     exit $BUILD_EXIT_CODE
 fi
 tail -n 1000 build.out
+
+echo "--- Revert Workaround hardcoded expired galera cert: set date back in sync----"
+set -x
+! service chrony start
+! date
+! chronyc -a makestep
+set +x
+echo "--- Workaround hardcoded expired galera cert is complete ----"
 
 cp /var/vcap/packages/boost/lib/libboost_program_options.so.1.59.0 ${BOSH_INSTALL_TARGET}
 cp libgalera_smm.so ${BOSH_INSTALL_TARGET}
