@@ -107,6 +107,8 @@ builds:
     version: "27"
   e8631525-937f-431e-8cd3-b995d623a669:
     version: "26"
+  ed6f9344-87d5-478f-7636-7da5865705b5:
+    version: 40.0.4
   ee13233bbe5145880df31c53e0697b9bc931d128:
     version: "9"
   eebe6d22-f25a-418d-7e75-cf159bb79713:
