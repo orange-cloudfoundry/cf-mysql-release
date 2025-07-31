@@ -67,6 +67,8 @@ builds:
     version: 38.0.0
   80275d6bdb0016dc7a9e83410222761620393ad0:
     version: "4"
+  8b8b47d3-ea0b-40af-73c2-fa329ae052f3:
+    version: 40.1.1
   9a29cf0d-b256-48c9-bfe8-5b85ffa6f17f:
     version: "21"
   9abee393-5b23-423b-a4af-6305493d2348:
