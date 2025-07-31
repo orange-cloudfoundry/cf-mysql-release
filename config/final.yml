@@ -3,6 +3,6 @@ final_name: cf-mysql
 blobstore:
   provider: s3
   options:
-    bucket_name: s3selfcare-cf-mysql-cf-service-boshrelease
+    bucket_name: orange-cf-mysql-cf-service-boshrelease
     region: eu
     host: storage.googleapis.com
